@@ -1,0 +1,17 @@
+1.
+I used fastapi and pydantic to create the API interface
+I used pandas to create the underlying algorithm
+I used requests, json and multiprocessing to make calls to my Rest API and test my code.
+
+2.
+Advantages:
+- I used binary search to optimize the placing of positive adds which ensures my dataframe is sorted by timestamp and removes the need to sort when other requests are made
+- I use mutexes locks around my object accesses in the API to allow for concurrency and stability
+- Ensures that a payer cannot have a negative overall point contribution
+
+Disadvantages:
+- Each function has O(N) complexity and uses pandas DataFrame edits which may not be optimized for speed
+- Locks around every object access may bottleneck the API as only one thread can make changes to the object at a time
+- Store multiple copies of payer string and use string compare for timestamp ordering which could scale with more entries
+
+3.

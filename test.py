@@ -38,7 +38,7 @@ def testBankNoNeg():
     assert spent["DANNON"] == -800
     assert spent["MILLER COORS"] == -200
     bal = bank.balance()
-    assert "DANNON" not in bal.keys()
+    assert "DANNON" in bal.keys()
     assert bal["MILLER COORS"] == 800
     print("passed")
 
@@ -69,6 +69,7 @@ def testAPIRejectNegAdd():
     bal = json.loads(response.text)
     assert bal["DANNON"] == 1000
     assert bal["MILLER COORS"] == 5500
+    assert bal["UNILEVER"] == 0
     print("passed")
 
 def testAPIMultipleSpend():
@@ -96,6 +97,8 @@ def testAPIMultipleSpend():
     assert {"payer":"A","points":-200} in spent
     assert {"payer":"B","points":-200} in spent
     assert {"payer":"C","points":-4600} in spent
+    response = requests.get("http://localhost:8000/balance")
+    bal = json.loads(response.text)
     response = requests.post("http://localhost:8000/add", json = {"payer": "D", "points": 1000, "timestamp": "2021-10-31T10:00:00Z"})
     assert response.status_code == 200
     response = requests.post("http://localhost:8000/add", json = {"payer": "B", "points": -100, "timestamp": "2022-10-31T10:00:00Z"})
@@ -116,10 +119,10 @@ def testAPIMultipleSpend():
     assert {"payer":"D","points":-1000} in spent
     response = requests.get("http://localhost:8000/balance")
     bal = json.loads(response.text)
-    assert "D" not in bal.keys()
+    assert bal["D"] == 0
     print("passed")
 
-#testBank()
+testBank()
 testBankNoNeg()
-#testAPIRejectNegAdd()
-#testAPIMultipleSpend()
+testAPIRejectNegAdd()
+testAPIMultipleSpend()

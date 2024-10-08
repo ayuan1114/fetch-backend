@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Response, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from threading import Lock
 from bank import PointBank
 
 class Transaction(BaseModel):
@@ -11,25 +12,27 @@ class Transaction(BaseModel):
 class Spend(BaseModel):
     points: int
 
+mutex = Lock()
 api = FastAPI()
 bank = PointBank()
 
 @api.post("/add", status_code=200)
 async def points_add(transaction: Transaction, response: Response):
-    if bank.add(transaction.payer, transaction.points, transaction.timestamp) == -1:
+    with mutex:
+        resp = bank.add(transaction.payer, transaction.points, transaction.timestamp)
+    if resp == -1:
         response.status_code = 400
 
 @api.get("/balance", status_code=200)
 async def points_balance():
-    payers = bank.balance()
-    retDict = {}
-    for item in payers.index:
-        retDict[item] = int(payers[item])
-    return JSONResponse(content = retDict)
+    with mutex:
+        payers = bank.balance()
+    return JSONResponse(content = payers)
 
 @api.post("/spend", status_code = 200)
 async def points_spend(spend: Spend, response: Response):
-    result = bank.spend(spend.points)
+    with mutex:
+        result = bank.spend(spend.points)
     if result == -1:
         response.status_code = 400
         return
@@ -41,4 +44,5 @@ async def points_spend(spend: Spend, response: Response):
 #clear the points repo, for testing purposes
 @api.post("/clear", status_code = 200)
 async def clear():
-    bank = PointBank()
+    with mutex:
+        bank.clear()

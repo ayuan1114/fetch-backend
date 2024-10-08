@@ -3,7 +3,12 @@ import pandas as pd
 class PointBank:
     def __init__(self):
         self.transactions = pd.DataFrame(columns = ['payer', 'points', 'timestamp'])
+        self.companies = set()
     
+    def clear(self):
+        self.transactions = pd.DataFrame(columns = ['payer', 'points', 'timestamp'])
+        self.companies = set()
+
     # helper function for add that bsearches timestamp location and inserts the new transaction
     def insert(self, payer: str, points: int, timestamp: str):
         mini = -1
@@ -48,12 +53,18 @@ class PointBank:
                 return -1
         else:
             self.insert(payer, points, timestamp)
+            if payer not in self.companies:
+                self.companies.add(payer)
     
     def balance(self):
-        return self.transactions.groupby(by=['payer'])['points'].sum()
+        bal = self.transactions.groupby(by=['payer'])['points'].sum()
+        retDict = dict.fromkeys(self.companies, 0)
+        for item in bal.index:
+            retDict[item] = int(bal[item])
+        return retDict
 
     def spend(self, points: int):
-        if sum(self.transactions['points']) + points < 0:
+        if points < 0 or sum(self.transactions['points']) < points:
             return -1
         payers = {}
         curInd = 0
