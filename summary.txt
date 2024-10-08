@@ -7,7 +7,7 @@ I used requests, json and multiprocessing to make calls to my Rest API and test 
 Advantages:
 - I used binary search to optimize the placing of positive adds which ensures my dataframe is sorted by timestamp and removes the need to sort when other requests are made
 - I use mutexes locks around my object accesses in the API to allow for concurrency and stability
-- Ensures that a payer cannot have a negative overall point contribution
+- I ensured that a payer cannot have a negative overall point contribution
 
 Disadvantages:
 - Each function has O(N) complexity and uses pandas DataFrame edits which may not be optimized for speed
@@ -15,3 +15,9 @@ Disadvantages:
 - Store multiple copies of payer string and use string compare for timestamp ordering which could scale with more entries
 
 3.
+2 summers ago I started working on an app that calculates the effectiveness of different Pokemon and their movesets in the mobile game Pokemon Go.
+I challenged myself to create an algorithm that would effectively rank all Pokemon by first ordering them by typing effectiveness and determining which types were best in certain scenarios.
+I ran into many issues with my first attempt at creating the algorithm and had to make many minor adjustments to get a desired output.
+Fastforward a summer, I had gained more experience working with end-to-end development and decided I wanted to take my add and make a Rest API that uses many of its functionalities.
+I had to make many adjustments to the original app and also spent a lot of time trying to figure out how to create my first Rest API using Spring Boot.
+In the end, I was able to create a functional API that cud store Pokemon instances and perform caluclations using those instances and I learned a lot about creating Rest APIs in the process.
